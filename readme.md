@@ -12,7 +12,7 @@
 
 ## 使用
 
-阅读并同意此条款后，从[Releases](https://github.com/WhitemuTeam/USBCopyer/releases)中下载`USBCopyer.exe`，双击运行后程序会在后台运行，等待插入U盘（每隔30s检查磁盘情况），插入U盘后的10分钟后才会开始复制文件（此举是为了防止在读取或使用U盘文件时出现卡顿），届时程序会在一瞬间弹出一个cmd窗口，复制结束后程序会等待拔出U盘并再次等待插入U盘，复制后的文件在files文件夹中，可使用Stop.bat停止本程序后台进程
+阅读并同意此条款后，从[Releases](https://github.com/WhitemuTeam/USBCopyer/releases)中下载`USBCopier.exe`，双击运行后程序会在后台运行，等待插入U盘（每隔30s检查磁盘情况），插入U盘后的10分钟后才会开始复制文件（此举是为了防止在读取或使用U盘文件时出现卡顿），届时程序会在一瞬间弹出一个cmd窗口，复制结束后程序会等待拔出U盘并再次等待插入U盘，复制后的文件在files文件夹中，可使用Stop.bat停止本程序后台进程
 
 ## 原理
 
@@ -22,7 +22,7 @@
 
 ### LOGO.ico
 
-`USBCopyer.exe`的图标，可删除
+`USBCopier.exe`的图标，可删除
 
 ### Readme.md
 
@@ -30,17 +30,17 @@
 
 ### Stop.bat
 
-用于关闭`USBCopyer.exe`的后台进程，可直接运行
+用于关闭`USBCopier.exe`的后台进程，可直接运行
 
-### USBCopyer.exe
+### USBCopier.exe
 
 （您需要到[Releases](https://github.com/WhitemuTeam/USBCopyer/releases)中获取）
 
 主程序，同意条款后可直接运行
 
-### USBCopyer.py
+### USBCopier.py
 
-`USBCopyer.exe`的Python源码文件，在安装并配置Python环境且同意条款后可运行
+`USBCopier.exe`的Python源码文件，在安装并配置Python环境且同意条款后可运行
 
 ### *Copy.bat
 
