@@ -61,7 +61,7 @@ class log:
             f.write(sen)
     def New_Usb(disk_path,name,dirname):
         sen0='[插入]'+time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())+': 有U盘插入，路径为'+disk_path
-        sen1='分区名: '+name+'\n'+' 存放路径'+dirname
+        sen1='分区名: '+name+' 存放路径'+dirname+'\n'
         sen=[]
         sen.append(sen0)
         sen.append(sen1)
