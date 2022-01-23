@@ -10,6 +10,8 @@ class Easy_GUI:
     def Button(text,font=('微软雅黑 10')):
         return sg.Button(text,font=font)
 
+def check_None():
+    pass
 def read_json():
     import json
     try:
@@ -26,11 +28,14 @@ def read_json():
 
 def auto_start_reg(auto_start):
     import win32api,win32con,os
-    key = win32api.RegOpenKey(win32con.HKEY_LOCAL_MACHINE,'SOFTWARE\Microsoft\Windows\CurrentVersion\Run',0, win32con.KEY_ALL_ACCESS)
-    if auto_start=='开启':
-        win32api.RegSetValueEx(key,'USBCopier',0,win32con.REG_SZ,'{}\\USBCopier.exe'.format(os.getcwd()))#写值（key, '项名', ...）
-    else:
-        win32api.RegSetValueEx(key,'USBCopier',0,win32con.REG_SZ,'')
+    try:
+        key = win32api.RegOpenKey(win32con.HKEY_LOCAL_MACHINE,'SOFTWARE\Microsoft\Windows\CurrentVersion\Run',0, win32con.KEY_ALL_ACCESS)
+        if auto_start=='开启':
+            win32api.RegSetValueEx(key,'USBCopier',0,win32con.REG_SZ,'{}\\USBCopier.exe'.format(os.getcwd()))#写值（key, '项名', ...）
+        else:
+            win32api.RegSetValueEx(key,'USBCopier',0,win32con.REG_SZ,'')
+    except:
+        pass
 
 def write_json(auto_start,save_path,wait_time):
     import json
@@ -54,11 +59,14 @@ def main():
         [Easy_GUI.Button('保存')]
     ]
     Setting_GUI=sg.Window('设置页面',layout=layout)
-    event=Setting_GUI.Read()
-    auto_start=event[1][0]
+    event,values=Setting_GUI.Read()
+    if event==sg.WIN_CLOSED or event=='Exit':
+        return None
+    print(values)
+    auto_start=values[0]
     auto_start_reg(auto_start)
-    save_path=event[1][1]
-    wait_time=event[1][2]
+    save_path=values[1]
+    wait_time=values[2]
     write_json(auto_start,save_path,wait_time)
 
 if __name__=='__main__':
