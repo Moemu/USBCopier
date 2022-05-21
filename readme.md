@@ -58,10 +58,8 @@
 
 ## 后话
 
-许可证：[Apache-2.0 License](https://github.com/WhitemuTeam/USBCopyer/blob/main/LICENSE)
-
-未经允许不可转载
+许可证：[Apache-2.0 License](https://github.com/Moemu/USBCopyer/blob/main/LICENSE)
 
 联系方式：WhitemuTeam@outlook.com
 
-WhitemuTeam
+By Moemu

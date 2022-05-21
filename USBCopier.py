@@ -6,7 +6,8 @@ from Setting import read_json
 auto_start,save_dir,wait_time=read_json()
 wait_time=int(wait_time)
 if save_dir=='':
-    os.mkdir('file')
+    if not os.path.isdir('files'):
+        os.mkdir('files')
     save_dir=dir+r'\files'
 os.chdir(save_dir)
 
@@ -18,10 +19,6 @@ def getname(copydir):
     with open('temp.txt','r') as f:
         name=f.readlines()[0].split('是 ')[1].split('\n')[0]
     os.remove('temp.txt')
-    try:
-        os.chdir(dir)
-    except:
-        pass
     return name
 
 #获取磁盘信息

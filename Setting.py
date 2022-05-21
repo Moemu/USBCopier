@@ -10,8 +10,6 @@ class Easy_GUI:
     def Button(text,font=('微软雅黑 10')):
         return sg.Button(text,font=font)
 
-def check_None():
-    pass
 def read_json():
     import json
     try:
